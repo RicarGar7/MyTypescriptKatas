@@ -23,25 +23,25 @@ export function markdownParser(text: string): string {
 
   let counter = 1
   let body: string = ""
-  let footer: FooterElement[] = []
+  let footer: string = ""
   while (text.length > 0 && hasLink(text)) {
     const preAnchorText = text.substring(0, text.indexOf("["))
     const label = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
     const link = text.substring(text.indexOf("(") + 1, text.indexOf(")"))
-    const index = footer.findIndex((e) => e.value === link)
-    const existsInFooter = index > -1
-    if (existsInFooter) {
-      body += `${preAnchorText}${label} ${footer[index].key}`
+    let anchorLabel = `[^anchor${counter}]`
+    const existsLink = footer.includes(link)
+    if (existsLink) {
+      const indexLink = footer.indexOf(link)
+      anchorLabel = `[^anchor${footer[indexLink - 4]}]`
     } else {
-      const anchorLabel = `[^anchor${counter}]`
-      body += `${preAnchorText}${label} ${anchorLabel}`
-      footer.push(new FooterElement(anchorLabel, link))
+      footer += `\n${anchorLabel}: ${link}`
       counter++
     }
+    body += `${preAnchorText}${label} ${anchorLabel}`
     text = text.substring(text.indexOf(")") + 1)
   }
 
-  return body + text + "\n" + footer.map((element) => element.toString()).join("\n")
+  return body + text + footer
 }
 
 const hasLink = (text: string) => text.indexOf("[") != -1

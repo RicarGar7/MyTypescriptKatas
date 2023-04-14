@@ -56,6 +56,10 @@ const params: Record<string, MarkdownTestParam> = {
     in: "se puede encontrar [este libro](https://codigosostenible.com) y [este libro](https://codigosostenible.com) son los mejores",
     out: "se puede encontrar este libro [^anchor1] y este libro [^anchor1] son los mejores\n[^anchor1]: https://codigosostenible.com",
   },
+  "handle same anchor on non consecutive positions": {
+    in: "se puede encontrar [este libro](https://codigosostenible.com) y [este otro](https://whenever.com) y [este libro](https://codigosostenible.com) son los mejores",
+    out: "se puede encontrar este libro [^anchor1] y este otro [^anchor2] y este libro [^anchor1] son los mejores\n[^anchor1]: https://codigosostenible.com\n[^anchor2]: https://whenever.com",
+  },
 }
 
 describe("Markdown cli", () => {
@@ -77,7 +81,10 @@ describe("Markdown cli", () => {
       expectParam(params["with previous no anchor text"])
       expectParam(params["n times"])
       expectParam(params["attach last no anchor text"])
+    })
+    it("handle repeated links", () => {
       expectParam(params["handle same anchor"])
+      expectParam(params["handle same anchor on non consecutive positions"])
     })
   })
 })
